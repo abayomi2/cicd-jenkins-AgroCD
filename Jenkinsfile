@@ -37,9 +37,11 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    env.IMAGE_TAG = "${DOCKER_IMAGE}:${BUILD_NUMBER}"
-                    sh "docker build -t ${IMAGE_TAG} ."
+                dir('app') {
+                    script {
+                        env.IMAGE_TAG = "${DOCKER_IMAGE}:${BUILD_NUMBER}"
+                        sh "docker build -t ${IMAGE_TAG} ."
+                    }
                 }
             }
         }
