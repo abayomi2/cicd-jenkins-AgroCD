@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: abayomi2/gitops-app:latest # Replace with actual repo
+          image: abayomi2/demo-app:8
           ports:
             - containerPort: 3000
           readinessProbe:
