@@ -61,12 +61,12 @@ pipeline {
             steps {
                 script {
                     sh """
-                        sed -i 's|image: .*|image: ${IMAGE_TAG}|' manifest/deployment.yaml
+                        sed -i 's|image: .*|image: ${IMAGE_TAG}|' manifests/deployment.yaml
 
                         git config --global user.email "jenkins@ci.com"
                         git config --global user.name "Jenkins CI"
 
-                        git add manifest/deployment.yaml
+                        git add manifests/deployment.yaml
                         git commit -m "Update image tag to ${IMAGE_TAG} [ci skip]" || echo "No changes to commit"
 
                         git push https://${GIT_CREDENTIALS_USR}:${GIT_CREDENTIALS_PSW}@github.com/abayomi2/cicd-jenkins-AgroCD.git HEAD:main
