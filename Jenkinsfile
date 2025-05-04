@@ -21,13 +21,17 @@ pipeline {
 
         stage('Build with Maven') {
             steps {
-                sh 'mvn clean package -DskipTests'
+                dir('app') {
+                    sh 'mvn clean package -DskipTests'
+                }
             }
         }
 
         stage('Run Unit Tests') {
             steps {
-                sh 'mvn test'
+                dir('app') {
+                    sh 'mvn test'
+                }
             }
         }
 
