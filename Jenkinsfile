@@ -28,7 +28,7 @@ pipeline {
         stage('Run Unit Tests') {
             steps {
                 dir('app') {
-                    sh 'mvn clean test'
+                    sh 'mvn test'
                 }
             }
         }
