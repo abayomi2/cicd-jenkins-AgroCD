@@ -3,8 +3,13 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "abayomi2/demo-app"
-        REGISTRY_CREDENTIALS = credentials('dockerhub-creds')
-        GIT_CREDENTIALS = credentials('git-creds') // Jenkins username/password credentials
+        REGISTRY_CREDENTIALS = credentials('REGISTRY_CREDENTIALS') // DockerHub/JFrog etc.
+        GIT_CREDENTIALS = credentials('GIT_CREDENTIALS') // GitHub token or username/password
+    }
+
+    tools {
+        jdk 'java'
+        maven 'maven'
     }
 
     stages {
@@ -38,8 +43,10 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    sh "echo $REGISTRY_CREDENTIALS_PSW | docker login -u $REGISTRY_CREDENTIALS_USR --password-stdin"
-                    sh "docker push ${IMAGE_TAG}"
+                    sh """
+                        echo "${REGISTRY_CREDENTIALS_PSW}" | docker login -u "${REGISTRY_CREDENTIALS_USR}" --password-stdin
+                        docker push ${IMAGE_TAG}
+                    """
                 }
             }
         }
@@ -48,12 +55,15 @@ pipeline {
             steps {
                 script {
                     sh """
-                      sed -i 's|image: .*|image: ${IMAGE_TAG}|' k8s/deployment.yaml
-                      git config user.email "jenkins@ci.com"
-                      git config user.name "Jenkins CI"
-                      git add k8s/deployment.yaml
-                      git commit -m "Update image tag to ${IMAGE_TAG} [ci skip]" || echo "No changes to commit"
-                      git push https://${GIT_CREDENTIALS_USR}:${GIT_CREDENTIALS_PSW}@github.com/abayomi2/your-repo.git HEAD:main
+                        sed -i 's|image: .*|image: ${IMAGE_TAG}|' manifest/deployment.yaml
+
+                        git config --global user.email "jenkins@ci.com"
+                        git config --global user.name "Jenkins CI"
+
+                        git add manifest/deployment.yaml
+                        git commit -m "Update image tag to ${IMAGE_TAG} [ci skip]" || echo "No changes to commit"
+
+                        git push https://${GIT_CREDENTIALS_USR}:${GIT_CREDENTIALS_PSW}@github.com/abayomi2/cicd-jenkins-AgroCD.git HEAD:main
                     """
                 }
             }
