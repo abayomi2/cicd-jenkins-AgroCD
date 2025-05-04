@@ -1,64 +1,59 @@
 pipeline {
-  agent any
+    agent any
 
-  environment {
-    IMAGE_NAME = "your-artifactory-domain.com/your-repo/your-app"
-    GIT_REPO = "git@github.com:your-org/your-repo.git"
-    DEPLOYMENT_FILE = "k8s/deployment.yaml"
-    BRANCH = "main"
-    JFROG_USERNAME = credentials('jfrog-username')
-    JFROG_PASSWORD = credentials('jfrog-password')
-  }
-
-  stages {
-    stage('Checkout Code') {
-      steps {
-        git branch: "${BRANCH}", url: "${GIT_REPO}"
-      }
+    environment {
+        DOCKER_IMAGE = "abayomi2/demo-app"
+        REGISTRY_CREDENTIALS = credentials('dockerhub-creds')
     }
 
-    stage('Build Docker Image') {
-      steps {
-        script {
-          IMAGE_TAG = "v${BUILD_NUMBER}"
-          sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ./app"
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
         }
-      }
-    }
 
-    stage('Push to JFrog Artifactory') {
-      steps {
-        script {
-          sh """
-            echo "${JFROG_PASSWORD}" | docker login ${IMAGE_NAME} --username "${JFROG_USERNAME}" --password-stdin
-            docker push ${IMAGE_NAME}:${IMAGE_TAG}
-          """
+        stage('Build with Maven') {
+            steps {
+                sh 'mvn clean package -DskipTests'
+            }
         }
-      }
-    }
 
-    stage('Update Kubernetes Manifests') {
-      steps {
-        script {
-          sh """
-            sed -i 's|image: .*$|image: ${IMAGE_NAME}:${IMAGE_TAG}|' ${DEPLOYMENT_FILE}
-            git config user.name "jenkins-bot"
-            git config user.email "jenkins@example.com"
-            git add ${DEPLOYMENT_FILE}
-            git commit -m "Update image to ${IMAGE_TAG}"
-            git push origin ${BRANCH}
-          """
+        stage('Run Unit Tests') {
+            steps {
+                sh 'mvn test'
+            }
         }
-      }
-    }
-  }
 
-  post {
-    failure {
-      echo 'Build failed!'
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    def imageTag = "${DOCKER_IMAGE}:${BUILD_NUMBER}"
+                    sh "docker build -t ${imageTag} ."
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    def imageTag = "${DOCKER_IMAGE}:${BUILD_NUMBER}"
+                    sh "echo $REGISTRY_CREDENTIALS_PSW | docker login -u $REGISTRY_CREDENTIALS_USR --password-stdin"
+                    sh "docker push ${imageTag}"
+                }
+            }
+        }
+
+        stage('Post Build Cleanup') {
+            steps {
+                sh 'docker system prune -f'
+            }
+        }
     }
-    success {
-      echo "Build ${BUILD_NUMBER} completed and pushed to Git. ArgoCD will sync automatically."
+
+    post {
+        always {
+            junit 'target/surefire-reports/*.xml'
+        }
     }
-  }
 }
