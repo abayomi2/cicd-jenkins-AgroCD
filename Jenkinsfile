@@ -1,32 +1,64 @@
 pipeline {
   agent any
+
   environment {
-    DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
+    IMAGE_NAME = "your-artifactory-domain.com/your-repo/your-app"
+    GIT_REPO = "git@github.com:your-org/your-repo.git"
+    DEPLOYMENT_FILE = "k8s/deployment.yaml"
+    BRANCH = "main"
+    JFROG_USERNAME = credentials('jfrog-username')
+    JFROG_PASSWORD = credentials('jfrog-password')
   }
+
   stages {
-    stage('Checkout') {
+    stage('Checkout Code') {
       steps {
-        git branch: 'main', url: 'https://github.com/abayomi2/gitops-project.git'
+        git branch: "${BRANCH}", url: "${GIT_REPO}"
       }
     }
-    stage('Build & Push') {
+
+    stage('Build Docker Image') {
       steps {
-        sh 'docker build -t abayomi2/gitops-app:latest ./app'
-        sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-        sh 'docker push abayomi2/gitops-app:latest'
+        script {
+          IMAGE_TAG = "v${BUILD_NUMBER}"
+          sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ./app"
+        }
       }
     }
-    stage('Update Manifest') {
+
+    stage('Push to JFrog Artifactory') {
       steps {
-        sh '''
-          sed -i 's|abayomi2/gitops-app:.*|abayomi2/gitops-app:latest|' manifests/deployment.yaml
-          git config user.name "Jenkins Bot"
-          git config user.email "jenkins@example.com"
-          git add manifests/deployment.yaml
-          git commit -m "Update image tag via Jenkins"
-          git push
-        '''
+        script {
+          sh """
+            echo "${JFROG_PASSWORD}" | docker login ${IMAGE_NAME} --username "${JFROG_USERNAME}" --password-stdin
+            docker push ${IMAGE_NAME}:${IMAGE_TAG}
+          """
+        }
       }
+    }
+
+    stage('Update Kubernetes Manifests') {
+      steps {
+        script {
+          sh """
+            sed -i 's|image: .*$|image: ${IMAGE_NAME}:${IMAGE_TAG}|' ${DEPLOYMENT_FILE}
+            git config user.name "jenkins-bot"
+            git config user.email "jenkins@example.com"
+            git add ${DEPLOYMENT_FILE}
+            git commit -m "Update image to ${IMAGE_TAG}"
+            git push origin ${BRANCH}
+          """
+        }
+      }
+    }
+  }
+
+  post {
+    failure {
+      echo 'Build failed!'
+    }
+    success {
+      echo "Build ${BUILD_NUMBER} completed and pushed to Git. ArgoCD will sync automatically."
     }
   }
 }
