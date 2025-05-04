@@ -1,0 +1,26 @@
+# Ignore Maven build artifacts except the final jar
+target/*
+!target/*.jar
+
+# IntelliJ / Eclipse IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+*.classpath
+*.project
+.settings/
+
+# Logs and OS files
+*.log
+.DS_Store
+*.swp
+
+# Git and temporary files
+.git
+.gitignore
+*.bak
+*.tmp
+
+# Node modules (if present)
+node_modules/
