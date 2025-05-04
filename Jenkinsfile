@@ -87,7 +87,7 @@ pipeline {
     post {
         always {
             dir('app') {
-                junit 'target/surefire-reports/*.xml'
+                junit 'app/target/surefire-reports/*.xml'
             }
         }
     }
