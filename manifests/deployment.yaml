@@ -1,33 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: gitops-app
-  labels:
-    app: gitops-app
+  name: cicd-app
+  namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: gitops-app
+      app: cicd-app
   template:
     metadata:
       labels:
-        app: gitops-app
+        app: cicd-app
     spec:
       containers:
-        - name: app
-          image: abayomi2/demo-app:32
-          ports:
-            - containerPort: 3000
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 3000
-            initialDelaySeconds: 5
-            periodSeconds: 10
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 3000
-            initialDelaySeconds: 15
-            periodSeconds: 20
+      - name: cicd-app
+        image: "abayomi2/demo-app:${IMAGE_TAG}" # Ensure this is dynamically updated by your pipeline
+        ports:
+        - containerPort: 8080
+        

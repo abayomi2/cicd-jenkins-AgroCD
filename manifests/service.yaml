@@ -1,12 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: gitops-service
+  name: cicd-app
+  namespace: default
 spec:
   selector:
-    app: gitops-app
+    app: cicd-app
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 3000
-  type: LoadBalancer
+      targetPort: 8080
+  type: LoadBalancer  # Change if you use ClusterIP or NodePort
