@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: cicd-app
-        image: "abayomi2/demo-app:${IMAGE_TAG}" # Ensure this is dynamically updated by your pipeline
+        image: abayomi2/demo-app:34
         ports:
         - containerPort: 8080
         
