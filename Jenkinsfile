@@ -10,7 +10,28 @@ pipeline {
         maven 'maven'
     }
 
+    options {
+        // Prevent concurrent builds
+        disableConcurrentBuilds()
+    }
+
     stages {
+        stage('Skip if triggered by Jenkins') {
+            when {
+                expression {
+                    // Get last commit author email and compare
+                    def lastCommitEmail = sh(
+                        script: "git log -1 --pretty=format:'%ae'",
+                        returnStdout: true
+                    ).trim()
+                    return lastCommitEmail != 'jenkins@ci.com'
+                }
+            }
+            steps {
+                echo "Continuing build: Last commit NOT made by Jenkins."
+            }
+        }
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -46,7 +67,6 @@ pipeline {
                 dir('app') {
                     script {
                         env.IMAGE_TAG = "${DOCKER_IMAGE}:${BUILD_NUMBER}"
-                        // Ensure WAR is named correctly and Dockerfile uses correct COPY
                         sh 'cp target/*.war cicd-expertise.war'
                         sh "docker build -t ${IMAGE_TAG} ."
                     }
