@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: 'https://github.com/your-org/gitops-project.git'
     targetRevision: HEAD
-    path: manifests
+    path: argocd/manifests
   project: default
   syncPolicy:
     automated:
