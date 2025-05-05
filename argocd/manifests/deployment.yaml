@@ -18,16 +18,16 @@ spec:
         - name: app
           image: abayomi2/demo-app:12
           ports:
-            - containerPort: 3000
+            - containerPort: 8080
           readinessProbe:
             httpGet:
               path: /
-              port: 3000
+              port: 8080
             initialDelaySeconds: 5
             periodSeconds: 10
           livenessProbe:
             httpGet:
               path: /
-              port: 3000
+              port: 8080
             initialDelaySeconds: 15
             periodSeconds: 20
