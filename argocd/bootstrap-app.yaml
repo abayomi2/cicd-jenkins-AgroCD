@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd-bootstrap
+  namespace: argocd
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  source:
+    repoURL: https://github.com/abayomi2/cicd-jenkins-AgroCD.git
+    targetRevision: HEAD
+    path: argocd
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
