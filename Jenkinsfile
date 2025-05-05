@@ -46,6 +46,7 @@ pipeline {
                 dir('app') {
                     script {
                         env.IMAGE_TAG = "${DOCKER_IMAGE}:${BUILD_NUMBER}"
+                        sh 'cp target/*.war .'
                         sh "docker build -t ${IMAGE_TAG} ."
                     }
                 }
