@@ -9,7 +9,7 @@ spec:
     namespace: default
     server: 'https://kubernetes.default.svc'
   source:
-    repoURL: 'https://github.com/your-org/gitops-project.git'
+    repoURL: 'https://github.com/abayomi2/cicd-jenkins-AgroCD.git'
     targetRevision: HEAD
     path: argocd/manifests
   project: default
