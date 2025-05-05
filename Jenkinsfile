@@ -11,24 +11,25 @@ pipeline {
     }
 
     options {
-        // Prevent concurrent builds
         disableConcurrentBuilds()
     }
 
     stages {
-        stage('Skip if triggered by Jenkins') {
-            when {
-                expression {
-                    // Get last commit author email and compare
-                    def lastCommitEmail = sh(
-                        script: "git log -1 --pretty=format:'%ae'",
-                        returnStdout: true
-                    ).trim()
-                    return lastCommitEmail != 'jenkins@ci.com'
-                }
-            }
+        stage('Check Commit Source') {
             steps {
-                echo "Continuing build: Last commit NOT made by Jenkins."
+                script {
+                    def lastCommitEmail = sh(script: "git log -1 --pretty=format:'%ae'", returnStdout: true).trim()
+                    def lastCommitMsg = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
+
+                    if (lastCommitEmail == "jenkins@ci.com" || lastCommitMsg.contains("[ci skip]")) {
+                        echo "Build triggered by Jenkins or contains [ci skip]; skipping pipeline."
+                        currentBuild.result = 'SUCCESS'
+                        // Exit pipeline early
+                        error("Stopping pipeline - Not a CLI-triggered commit.")
+                    } else {
+                        echo "Commit appears to be from CLI: ${lastCommitEmail}"
+                    }
+                }
             }
         }
 
