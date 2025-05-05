@@ -21,6 +21,7 @@ pipeline {
             steps {
                 dir('app') {
                     sh 'mvn clean package -DskipTests'
+                    sh 'ls -lh target' // Show build output
                 }
             }
         }
@@ -29,6 +30,15 @@ pipeline {
             steps {
                 dir('app') {
                     sh 'mvn test'
+                }
+            }
+        }
+
+        stage('Verify JAR Exists') {
+            steps {
+                dir('app') {
+                    // Fail early if no JAR is built
+                    sh 'test -f target/*.jar || (echo "ERROR: JAR not found in target/ directory!" && exit 1)'
                 }
             }
         }
