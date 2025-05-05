@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: abayomi2/demo-app:30
+          image: abayomi2/demo-app:32
           ports:
             - containerPort: 3000
           readinessProbe:
