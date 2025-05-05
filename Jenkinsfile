@@ -46,7 +46,8 @@ pipeline {
                 dir('app') {
                     script {
                         env.IMAGE_TAG = "${DOCKER_IMAGE}:${BUILD_NUMBER}"
-                        sh 'cp target/*.war .'
+                        // Ensure WAR is named correctly and Dockerfile uses correct COPY
+                        sh 'cp target/*.war cicd-expertise.war'
                         sh "docker build -t ${IMAGE_TAG} ."
                     }
                 }
