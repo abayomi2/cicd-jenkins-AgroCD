@@ -43,12 +43,14 @@
     </style>
 </head>
 <body>
-    <h1>CI/CD Expertise Showcase</h1>
+    <h1>CI/CD Expertise Showcase by Abayomi</h1>
     <div class="tools">
         <div class="tool">Jenkins</div>
         <div class="tool">ArgoCD</div>
         <div class="tool">AWS EKS</div>
         <div class="tool">Terraform</div>
+        <div class="tool">GitHub Actions</div>
+        <div class="tool">Docker</div>
     </div>
     <footer>
         Deployed via CI/CD Pipeline | Powered by Jenkins + ArgoCD
