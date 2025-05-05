@@ -1,33 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: gitops-app
-  labels:
-    app: gitops-app
+  name: cicd-app
+  namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: gitops-app
+      app: cicd-app
   template:
     metadata:
       labels:
-        app: gitops-app
+        app: cicd-app
     spec:
       containers:
-        - name: app
-          image: abayomi2/demo-app:12
-          ports:
-            - containerPort: 8080
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 8080
-            initialDelaySeconds: 5
-            periodSeconds: 10
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 8080
-            initialDelaySeconds: 15
-            periodSeconds: 20
+      - name: cicd-app
+        image: abayomi2/demo-app:34
+        ports:
+        - containerPort: 8080
+        
