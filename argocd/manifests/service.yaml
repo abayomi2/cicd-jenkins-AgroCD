@@ -10,4 +10,24 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 8080
+<<<<<<< HEAD
   type: ClusterIP  # Change if you use ClusterIP or NodePort
+=======
+  type: ClusterIP
+
+
+
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: cicd-app
+#   namespace: default
+# spec:
+#   selector:
+#     app: cicd-app
+#   ports:
+#     - protocol: TCP
+#       port: 80
+#       targetPort: 8080
+#   type: LoadBalancer  # Change if you use ClusterIP or NodePort
+>>>>>>> bface4a (com3)

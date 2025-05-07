@@ -26,4 +26,7 @@ kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "ClusterIP"}}'
 
 # Apply your argocd-app.yaml to ensure ArgoCD monitors deploys your applications in your manifests
 kubectl apply -f argocd/argocd-app.yaml
-kubectl get svc -n default
+kubectl -n argocd describe app cicd-app
+
+# To use ingress controller for your application create a app-ingress.yaml and apply it
+# Ensure to edit the svc cicd-app and change the service type from LoadBalancer to ClusterIP

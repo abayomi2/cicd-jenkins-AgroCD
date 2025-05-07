@@ -18,4 +18,27 @@ spec:
         image: abayomi2/demo-app:47
         ports:
         - containerPort: 8080
+
+
+
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: cicd-app
+#   namespace: default
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: cicd-app
+#   template:
+#     metadata:
+#       labels:
+#         app: cicd-app
+#     spec:
+#       containers:
+#       - name: cicd-app
+#         image: abayomi2/demo-app:34
+#         ports:
+#         - containerPort: 8080
         
