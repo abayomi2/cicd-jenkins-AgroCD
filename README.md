@@ -23,3 +23,7 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 
 # Patch the ArgoCD server to use ClusterIP (if not already)
 kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "ClusterIP"}}'
+
+# Apply your argocd-app.yaml to ensure ArgoCD monitors deploys your applications in your manifests
+kubectl apply -f argocd/argocd-app.yaml
+kubectl get svc -n default
