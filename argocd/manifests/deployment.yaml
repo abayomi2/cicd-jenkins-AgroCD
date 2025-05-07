@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: cicd-app
-        image: abayomi2/demo-app:45
+        image: abayomi2/demo-app:47
         ports:
         - containerPort: 8080
         
