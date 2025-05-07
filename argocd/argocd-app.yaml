@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: 'https://github.com/abayomi2/cicd-jenkins-AgroCD.git'
     targetRevision: HEAD
-    path: argocd/manifests
+    path: argocd
   project: default
   syncPolicy:
     automated:

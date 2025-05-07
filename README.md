@@ -20,3 +20,6 @@ kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.pas
 # Steps to Expose ArgoCD via Ingress
 # Run to Install ingress-nginx
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.9.4/deploy/static/provider/cloud/deploy.yaml
+
+# Patch the ArgoCD server to use ClusterIP (if not already)
+kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "ClusterIP"}}'
