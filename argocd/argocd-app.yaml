@@ -5,13 +5,12 @@ metadata:
   namespace: argocd
 spec:
   destination:
-    name: ''
-    namespace: default
     server: 'https://kubernetes.default.svc'
+    namespace: default
   source:
     repoURL: 'https://github.com/abayomi2/cicd-jenkins-AgroCD.git'
     targetRevision: HEAD
-    path: argocd
+    path: argocd/manifests
   project: default
   syncPolicy:
     automated:
