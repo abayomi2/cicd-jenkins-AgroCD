@@ -96,10 +96,10 @@ pipeline {
                         def repoUrl = "https://${GIT_USER}:${encodedPass}@github.com/abayomi2/cicd-jenkins-AgroCD.git"
 
                         sh """
-                            sed -i 's|image: .*|image: ${IMAGE_TAG}|' manifests/deployment.yaml
+                            sed -i 's|image: .*|image: ${IMAGE_TAG}|' argocd/manifests/deployment.yaml
                             git config user.email "jenkins@ci.com"
                             git config user.name "Jenkins CI"
-                            git add manifests/deployment.yaml
+                            git add argocd/manifests/deployment.yaml
                             git commit -m "Update image tag to ${IMAGE_TAG} [ci skip]" || echo "No changes to commit"
                             git push ${repoUrl} HEAD:main
                         """
